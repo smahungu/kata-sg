@@ -1,5 +1,6 @@
 package com.smahungu.kata.sg.service;
 
+import com.smahungu.kata.sg.exception.BadWithdrawalAmountException;
 import com.smahungu.kata.sg.exception.NoPositiveAmountException;
 import com.smahungu.kata.sg.model.AccountModel;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,6 @@ class AccountServiceTest {
 
         //Then
         assertEquals(785.35f, result.getBalance());
-
     }
 
     @Test
@@ -36,6 +36,28 @@ class AccountServiceTest {
 
         //When & Then
         assertThrows(NoPositiveAmountException.class, () -> {accountService.deposit(accountModel, -3f);});
+    }
 
+    @Test
+    void givenAccount_whenWithdrawal_ThenBalanceUpdate() {
+        //Given
+        AccountModel accountModel = new AccountModel();
+        accountModel.setBalance(50f);
+
+        //When
+        AccountModel result = accountService.withdrawal(accountModel, 40f);
+
+        //Then
+        assertEquals(50f - 40f, result.getBalance());
+    }
+
+    @Test
+    void givenAccount_whenBadWithdrawalAmount_thenException() {
+        //Given
+        AccountModel accountModel = new AccountModel();
+        accountModel.setBalance(100f);
+
+        //When & Then
+        assertThrows(BadWithdrawalAmountException.class, () -> {accountService.withdrawal(accountModel, 200f);});
     }
 }
